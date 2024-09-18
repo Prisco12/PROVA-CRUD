@@ -24,6 +24,11 @@ export class DestinoController {
     return this.destinoService.findOne(id);
   }
 
+  @Get('name')
+  findByName(@Body('name') name: string) {
+      return this.destinoService.findByName(name);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateDestinoDto: UpdateDestinoDto) {
     return this.destinoService.update(id, updateDestinoDto);

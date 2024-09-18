@@ -5,7 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Viagem, ViagemDocument } from './schema/viagem.schema';
 import mongoose, { Model } from 'mongoose';
 import { DestinoService } from 'src/destino/destino.service';
-import { error } from 'console';
+import { CreateDestinoDto } from 'src/destino/dto/create-destino.dto';
 
 @Injectable()
 export class ViagemService {
@@ -17,42 +17,31 @@ export class ViagemService {
     return this.viagemModel.create(createViagemDto);
   }
 
-  async addDestino(id: string, destino: mongoose.Types.ObjectId) {
-    const erro = { message: [] }
-    const destinoData = await this.destinoService.findAll()
-    if (destinoData.length === 0) {
-      return erro.message.push('Não há destinos cadastrados')
+  async addDestino(id: string, destino: CreateDestinoDto) {
+    const erro = { message: [] };
+    const viagem = await this.viagemModel.findById(id);
+    
+    if (!viagem) {
+      return erro.message.push('Viagem não encontrada, insira um id válido');
     } else {
-      const viagem = await this.viagemModel.findById(id);
-      if (!viagem) {
-       return erro.message.push('Viagem não encontrada, insira um id válido')	
-      } else {
-        const destinoResult = await this.destinoService.findOne(destino);
-        if (!destinoResult) {
-          return erro.message.push('Destino não encontrado, insira um id válido')
-        } else {
-          return await this.viagemModel.findByIdAndUpdate(id, {destino: destino}, {new: true}).populate('destino').exec();
-        }
-      }
+      await this.destinoService.create(destino);
+      return await this.viagemModel.findByIdAndUpdate(id, { $push: { destino: destino } }, { new: true });
     }
   }
-
-  async removeDestino(id: string, destino: mongoose.Types.ObjectId) {
-    const erro = { message: [] }
-    const destinoData = await this.destinoService.findAll()
+  
+  async removeDestino(id: string, destino: CreateDestinoDto) {
+    const erro = { message: [] };
+    const destinoData = await this.destinoService.findAll();
+  
     if (destinoData.length === 0) {
-      return erro.message.push('Não há destinos cadastrados')
+      return erro.message.push('Não há destinos cadastrados');
     } else {
       const viagem = await this.viagemModel.findById(id);
+      
       if (!viagem) {
-       return erro.message.push('Viagem não encontrada, insira um id válido')	
+        return erro.message.push('Viagem não encontrada, insira um id válido');
       } else {
-        const destinoResult = await this.destinoService.findOne(destino);
-        if (!destinoResult) {
-          return erro.message.push('Destino não encontrado, insira um id válido')
-        } else {
-          return await this.viagemModel.findByIdAndUpdate(id, {$unset: {destino: '' }}, {new: true}).populate('destino').exec();
-        }
+        return await this.viagemModel.findByIdAndUpdate(id, { $pull: { destino: destino } }, { new: true }).exec();
       }
     }
   }

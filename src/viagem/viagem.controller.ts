@@ -4,6 +4,7 @@ import { CreateViagemDto } from './dto/create-viagem.dto';
 import { UpdateViagemDto } from './dto/update-viagem.dto';
 import { ViagemInterface } from './interface/viagem.interface';
 import mongoose from 'mongoose';
+import { CreateDestinoDto } from 'src/destino/dto/create-destino.dto';
 
 @Controller('viagem')
 export class ViagemController {
@@ -15,12 +16,12 @@ export class ViagemController {
   }
 
   @Post('add-destino/:id')
-  addDestino(@Param('id') id: string, @Body('destino') destino: mongoose.Types.ObjectId) {
+  addDestino(@Param('id') id: string, @Body() destino: CreateDestinoDto) {
     return this.viagemService.addDestino(id, destino);
   }
 
   @Post('remove-destino/:id')
-  removeDestino(@Param('id') id: string, @Body('destino') destino: mongoose.Types.ObjectId) {
+  removeDestino(@Param('id') id: string, @Body() destino: CreateDestinoDto) {
     return this.viagemService.removeDestino(id, destino);
   }
 

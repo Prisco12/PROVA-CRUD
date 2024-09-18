@@ -1,6 +1,7 @@
 import { Type } from "class-transformer";
-import { IsDate, IsMongoId, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import { ArrayMinSize, IsArray, IsDate, IsMongoId, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 import mongoose, { mongo } from "mongoose";
+import { CreateDestinoDto } from "src/destino/dto/create-destino.dto";
 
 export class CreateViagemDto {
     @IsNotEmpty()
@@ -21,7 +22,8 @@ export class CreateViagemDto {
     @IsNumber()
     valor: number;
 
+    @IsArray()
     @IsOptional()
-    @IsMongoId()
-    destino: mongoose.Types.ObjectId;
+    @ArrayMinSize(0)
+    destino: CreateDestinoDto[];
 }

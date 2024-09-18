@@ -21,6 +21,10 @@ export class DestinoService {
     return this.destinoModel.findById(id);
   }
 
+  findByName(name: string) {
+    return this.destinoModel.findOne({ name: name }).exec();
+  }
+
   update(id: string, updateDestinoDto: UpdateDestinoDto) {
     return this.destinoModel.findByIdAndUpdate(id, {$set: updateDestinoDto}, {new: true});
   }

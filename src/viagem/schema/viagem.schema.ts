@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
+import { CreateDestinoDto } from 'src/destino/dto/create-destino.dto';
 
 export type ViagemDocument = HydratedDocument<Viagem>;
 
@@ -18,12 +19,8 @@ export class Viagem {
   @Prop({required: true})
   valor: number;
 
-  @Prop({
-    type: mongoose.Types.ObjectId,
-    ref: 'Destino',
-    required: false,
-  })
-  destino: mongoose.Types.ObjectId;
+  @Prop([CreateDestinoDto])
+  destino: CreateDestinoDto[];
 }
 
 export const ViagemSchema = SchemaFactory.createForClass(Viagem);
